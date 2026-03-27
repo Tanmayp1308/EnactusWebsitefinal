@@ -108,7 +108,7 @@ export function ModalFooter({
   children, 
   className = "" 
 }: { 
-  children: ReactNode; 
+  children?: ReactNode; 
   className?: string; 
 }) {
   const { close } = useModalContext();

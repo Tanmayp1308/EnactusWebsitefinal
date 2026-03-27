@@ -26,8 +26,8 @@ export const BentoGridItem = ({
   icon,
 }: {
   className?: string;
-  title?: string;
-  description?: string;
+  title?: React.ReactNode; // ✅ upgraded
+  description?: React.ReactNode; // ✅ FIXED
   header?: React.ReactNode;
   icon?: React.ReactNode;
 }) => {
@@ -44,9 +44,9 @@ export const BentoGridItem = ({
         </h3>
       </div>
 
-      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      <div className="text-sm text-neutral-600 dark:text-neutral-400">
         {description}
-      </p>
+      </div>
     </div>
   );
 };

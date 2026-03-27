@@ -81,7 +81,7 @@ function ModalBody({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-function ModalFooter({ children, className = "" }: { children: ReactNode; className?: string }) {
+function ModalFooter({ children, className = "" }: { children?: ReactNode; className?: string }) {
   return <div className={`flex justify-end space-x-3 mt-6 ${className}`}>{children}</div>;
 }
 
@@ -155,6 +155,11 @@ export function AnimatedModalDemo() {
             </div>
           </ModalContent>
           <ModalFooter className="gap-4">
+          
+  <button className="px-4 py-2 bg-gray-300 rounded">
+    Close
+  </button>
+
 
           </ModalFooter>
         </ModalBody>
