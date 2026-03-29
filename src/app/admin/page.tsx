@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-// import Papa from "papaparse"
+import Papa from "papaparse"
 
 export default function AdminPage() {
   const router = useRouter();
@@ -35,25 +35,25 @@ export default function AdminPage() {
     if (data) setTasks(data);
   };
 
-  // const handleCSVUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
+ const handleCSVUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+   if (!file) return;
 
-  //   Papa.parse(file, {
-  //     header: true,
-  //     skipEmptyLines: true,
-  //     complete: async (results) => {
-  //       const { error } = await supabase.from("team").insert(results.data as any);
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+     complete: async (results) => {
+        const { error } = await supabase.from("team").insert(results.data as any);
 
-  //       if (error) {
-  //         alert("Upload failed: " + error.message);
-  //       } else {
-  //         alert("Team uploaded successfully!");
-  //         fetchMembers();
-  //       }
-  //     },
-  //   });
-  // };
+        if (error) {
+          alert("Upload failed: " + error.message);
+        } else {
+          alert("Team uploaded successfully!");
+           fetchMembers();
+        }
+       },
+       });
+  };
 
   return (
     <main className="min-h-screen bg-[#000000] px-6 py-14">
