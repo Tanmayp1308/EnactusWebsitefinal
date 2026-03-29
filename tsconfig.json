@@ -26,9 +26,10 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.mts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "src/app/admin/tasks", "src/app/components/ui/bento-grid-deno"  ],
+    "src/types/**/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
