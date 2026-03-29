@@ -34,19 +34,19 @@ const DEFAULT_ITEMS: CarouselItem[] = [
     id: 1,
     title: "Orientation 2025",
     description: "Meet the core team and explore our impact projects.",
-    icon: <FiCalendar className="h-[16px] w-[16px] text-white" />,
+    icon: <FiCalendar className="h-16px w-16px text-white" />,
   },
   {
     id: 2,
     title: "Recruitments Open",
     description: "Design, Tech, Marketing & Operations.",
-    icon: <FiUsers className="h-[16px] w-[16px] text-white" />,
+    icon: <FiUsers className="h-16px w-16px text-white" />,
   },
   {
     id: 3,
     title: "Impact Summit",
     description: "Our flagship entrepreneurship event.",
-    icon: <FiStar className="h-[16px] w-[16px] text-white" />,
+    icon: <FiStar className="h-16px w-16px text-white" />,
   },
 ];
 
@@ -102,7 +102,7 @@ function CarouselItem({
       transition={transition}
     >
       <div className="p-5">
-        <span className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#060010]">
+        <span className="flex h-32px w-32px items-center justify-center rounded-full bg-[#060010]">
           {item.icon}
         </span>
       </div>

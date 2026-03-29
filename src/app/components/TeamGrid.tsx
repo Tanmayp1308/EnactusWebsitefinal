@@ -21,7 +21,7 @@ export default function TeamGrid({
       {members.map((member, idx) => (
         <div
           key={idx}
-                    className="group relative flex gap-6 rounded-2xl bg-[#0b0b0b] border border-white/10 p-7 min-h-[320px]
+                    className="group relative flex gap-6 rounded-2xl bg-[#0b0b0b] border border-white/10 p-7 min-h-320px
           transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40
           hover:shadow-[0_0_35px_rgba(59,130,246,0.18)]"
         >
