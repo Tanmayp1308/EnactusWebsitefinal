@@ -4,7 +4,7 @@ import React from "react";
 import "../../globals.css";
 import StaggeredMenu from "@/app/components/ui/StaggeredMenu";
 import Footer from "@/app/components/Footer";
-
+import { ThemeProvider } from "next-themes"; // ✅ added
 
 const menuItems = [
   { label: "Home", ariaLabel: "Go to home page", link: "/" },
@@ -28,34 +28,38 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-black text-slate-100 flex flex-col">
+      <body className="min-h-screen flex flex-col bg-white text-black dark:bg-black dark:text-slate-100">
+        
+        {/* ✅ THEME WRAPPER */}
+        <ThemeProvider attribute="class">
 
-        {/* MENU WRAPPER (NO POINTER EVENTS) */}
-        <div className="fixed top-0 left-0 w-full z-[9999] pointer-events-none">
-          {/* MENU ITSELF (ALLOW CLICKS) */}
-          <div className="pointer-events-auto">
-            <StaggeredMenu
-              isFixed
-              position="right"
-              items={menuItems}
-              socialItems={socialItems}
-              displaySocials
-              displayItemNumbering
-              menuButtonColor="#f8fafc"
-              openMenuButtonColor="#fbbf24"
-              changeMenuColorOnOpen
-              colors={["#020617", "#020617", "#020617"]}
-              accentColor="#fbbf24"
-            />
+          {/* MENU WRAPPER */}
+          <div className="fixed top-0 left-0 w-full z-[9999] pointer-events-none">
+            <div className="pointer-events-auto">
+              <StaggeredMenu
+                isFixed
+                position="right"
+                items={menuItems}
+                socialItems={socialItems}
+                displaySocials
+                displayItemNumbering
+                menuButtonColor="#f8fafc"
+                openMenuButtonColor="#fbbf24"
+                changeMenuColorOnOpen
+                colors={["#020617", "#020617", "#020617"]}
+                accentColor="#fbbf24"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* PAGE CONTENT */}
-        <main className="flex-1 relative pt-16">
-          {children}
-        </main>
+          {/* PAGE CONTENT */}
+          <main className="flex-1 relative pt-16">
+            {children}
+          </main>
 
-        <Footer />
+          <Footer />
+
+        </ThemeProvider>
 
       </body>
     </html>

@@ -2,6 +2,8 @@
 
 import React from "react";
 import TeamGrid from "@/app/components/TeamGrid";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 /* ================= CORE TEAM ================= */
 const coreTeam = [
@@ -100,55 +102,49 @@ const coreTeam = [
 
 /* ================= SENIOR MEMBERS (DEMO) ================= */
 const seniorMembers = [
-  {
-    name: "Tanmay",
-    role: "Senior Member",
-    image: "https://i.pravatar.cc/400?img=15",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    name: "Tanmay",
-    role: "Senior Member",
-    image: "https://i.pravatar.cc/400?img=16",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    name: "Tanmay ",
-    role: "Senior Member",
-    image: "https://i.pravatar.cc/400?img=17",
-    linkedin: "https://linkedin.com",
-  },
+  { name: "Abhik Pandey", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Abdul Fahad Khan", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Amar Singh", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Arpit", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Bhumika Tiwari", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Drishti Arora", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Khushi Sharma", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Mauleec Gupta", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Sagnik Pramanik", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Saicha Dabas", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Shailesh Gupta", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Siddiqua Batool Akbar", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Tanishka Jumnani", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Taufiq Ahmed", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Vansh Babbar", role: "Senior Member", image: "/avatar.webp", linkedin: "#" },
+  { name: "Yashika Kanwar", role: "Senior Member", image: "/avatar.webp", linkedin: "#" }
 ];
 
-/* ================= ASSOCIATES (DEMO) ================= */
-const associates = [
-  {
-    name: "Tanmay",
-    role: "Associate",
-    image: "https://i.pravatar.cc/400?img=18",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    name: "Tanmay",
-    role: "Associate",
-    image: "https://i.pravatar.cc/400?img=19",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    name: "Tanmay",
-    role: "Associate",
-    image: "https://i.pravatar.cc/400?img=20",
-    linkedin: "https://linkedin.com",
-  },
-  {
-    name: "Tanmay",
-    role: "Associate",
-    image: "https://i.pravatar.cc/400?img=21",
-    linkedin: "https://linkedin.com",
-  },
-];
 
 export default function CoreTeamPage() {
+  const [dbMembers, setDbMembers] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    const { data, error } = await supabase.from("team").select("*");
+    if (!error && data) {
+      const formatted = data.map((m) => ({
+        name: m.name,
+        role: m.role,
+        description: m.description,
+        image: m.image_url && m.image_url !== "" ? m.image_url : "/avatar.webp",
+        linkedin: m.linkedin || "#",
+      }));
+      setDbMembers(formatted);
+    }
+  };
+
+  // Merge static + DB members
+  const allMembers = [...coreTeam, ...seniorMembers, ...dbMembers];
+
   return (
     <main className="min-h-screen bg-black text-white-100">
 
@@ -158,7 +154,7 @@ export default function CoreTeamPage() {
           Meet Our Team
         </p>
 
-        <h1 className="mb-4 text-3xl md:text-6xl font-bold bg-gradient-to-r from-amber-400 to-white-400 bg-clip-text">
+        <h1 className="mb-4 text-3xl md:text-6xl font-bold bg-linear-to-r from-amber-400 to-white-400 bg-clip-text">
           Our People
         </h1>
 
@@ -172,7 +168,7 @@ export default function CoreTeamPage() {
         <h2 className="mb-10 text-2xl md:text-3xl font-semibold">
           CORE TEAM
         </h2>
-        <TeamGrid members={coreTeam} />
+        <TeamGrid members={[...coreTeam, ...dbMembers]} />
       </section>
 
       {/* SENIOR MEMBERS */}
@@ -183,13 +179,6 @@ export default function CoreTeamPage() {
         <TeamGrid members={seniorMembers} />
       </section>
 
-      {/* ASSOCIATES */}
-      <section className="px-4 pb-36 max-w-7xl mx-auto">
-        <h2 className="mb-10 text-2xl md:text-3xl font-semibold">
-          ASSOCIATES
-        </h2>
-        <TeamGrid members={associates} />
-      </section>
 
     </main>
   );

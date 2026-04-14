@@ -46,7 +46,7 @@ const ProjectLayout = ({ pages }: { pages: { title: string; desc: string; img: s
           className="p-4 md:p-10 rounded-[3rem] mb-6 transition-colors duration-500"
         >
           {/* Inner Content Card - Always White */}
-          <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-sm">
+          <div className="bg-white p-8 md:p-12 rounded-4xl shadow-sm">
             <p className="text-black dark:text-black text-base md:text-2xl font-sans max-w-3xl mx-auto">
               <span className="font-bold text-neutral-800 dark:text-black">
                 {page.title}
@@ -76,6 +76,10 @@ const PalaashContent = () => (
     { title: "Community Impact:", desc: "Empowering marginalized women through vocational training.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
     { title: "Scale:", desc: "Processing over 500kg of floral waste monthly.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
     { title: "Verticals Under Palaash", desc: "We have 3 Verticals under Project Palaash", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
+    { title: "On-Ground Work:", desc: "Collection and segregation of temple flower waste for sustainable reuse.", img: "/Palaash1.jpg", bgColor: "#f9bdff" },
+    { title: "Abir Vertical:", desc: "Production of eco-friendly gulal using recycled flower petals.", img: "/PalaashAbir.jpg", bgColor: "#f9bdff" },
+    { title: "Aromy Vertical:", desc: "Creation of incense and aromatic products from processed floral waste.", img: "/PalaashAromy.JPG", bgColor: "#f9bdff" },
+    { title: "Gulal Products:", desc: "Final natural dye products ready for distribution and usage.", img: "/PalaashGUl.jpg", bgColor: "#f9bdff" },
   ]} />
 );
 

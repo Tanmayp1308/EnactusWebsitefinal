@@ -106,16 +106,20 @@ export default function AdminPage() {
                   }
                 }
 
-                await supabase.from("team").insert([
-                  {
-                    name: memberName,
-                    roll_number: memberRoll,
-                    year: memberYear,
-                    role: memberRole,
-                    description: memberDesc,
-                    image_url: imageUrl,
-                  },
-                ]);
+                const { data, error } = await supabase.from("team").insert([
+  {
+    name: memberName,
+    roll: memberRoll,
+    year: memberYear,
+    role: memberRole,
+    description: memberDesc,
+    image_url: imageUrl,
+  },
+]);
+
+console.log("DATA:", data);
+console.log("ERROR:", error);
+
 
                 setMemberName("");
                 setMemberRoll("");

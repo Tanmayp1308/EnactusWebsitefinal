@@ -205,7 +205,7 @@ export default function Home() {
 
           {/* INFINITE MENU — MOVED BELOW FLOWING MENU */}
           <h2 className="text-4xl md:text-5xl font-bold mt-20">OUR PRODUCTS</h2>
-          <div className="w-full h-[480px] rounded-3xl overflow-hidden">
+          <div className="w-full h-[480px rounded-3xl overflow-hidden">
             <InfiniteMenu items={infiniteItems} scale={1.2} />
           </div>
            {/* ANIMATED BOOKING MODAL */}
