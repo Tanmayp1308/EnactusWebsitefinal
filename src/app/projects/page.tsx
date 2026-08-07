@@ -1,155 +1,203 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Carousel, Card } from "@/app/components/ui/apple-cards-carousel";
 import { BentoGridDemo } from "@/app/components/ui/bento-grid-demo";
 
-/**
- * Main Demo Component
- */
-export default function AppleCardsCarousel() {
-  const cards = data.map((card, index) => (
-    <Card key={card.src} card={card} index={index} />
+type ProjectPage = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+};
+
+type Project = {
+  category: string;
+  title: string;
+  src: string;
+  accent: string;
+  pages: ProjectPage[];
+};
+
+function ProjectLayout({ project }: { project: Project }) {
+  return (
+    <div className="space-y-5">
+      {project.pages.map((page) => (
+        <article
+          key={page.title}
+          className="overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-sm"
+        >
+          <div className="grid md:grid-cols-[1.15fr_0.85fr]">
+            <div className="p-6 sm:p-8 md:p-10">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-neutral-500">
+                {page.eyebrow}
+              </p>
+              <h3 className="text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl">
+                {page.title}
+              </h3>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-neutral-700 md:text-lg">
+                {page.description}
+              </p>
+            </div>
+            <div className="relative min-h-48 bg-neutral-100 md:min-h-full">
+              <Image
+                src={page.image}
+                alt={`${project.title}: ${page.title}`}
+                fill
+                sizes="(min-width: 768px) 36vw, 100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/5" />
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export default function ProjectsPage() {
+  const cards = projects.map((project, index) => (
+    <Card
+      key={project.title}
+      card={{
+        category: project.category,
+        title: project.title,
+        src: project.src,
+        content: <ProjectLayout project={project} />,
+      }}
+      index={index}
+    />
   ));
 
   return (
-    <div className="w-full min-h-screen py-20">
-      <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
-        Projects under Enactus Aryabhatta
-      </h2>
+    <div className="-mt-16 min-h-screen bg-white py-12 sm:py-16">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-amber-600">Enactus Aryabhatta</p>
+        <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl md:text-6xl">
+          Projects that turn challenges into opportunity.
+        </h1>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 md:text-lg">
+          Each project is built with communities at its centre: reducing waste, restoring ecosystems and creating dignified livelihoods.
+        </p>
+      </section>
+
       <Carousel items={cards} />
 
-      {/* Achievements Section */}
       <div className="mt-32">
         <h2 className="text-2xl md:text-5xl font-bold text-center text-neutral-800 dark:text-neutral-200 mb-10">
           Our Achievements
         </h2>
-
         <BentoGridDemo />
       </div>
     </div>
   );
 }
 
-/** 
- * UPDATED LAYOUT: 
- * Outer div = Color panel
- * Inner div = White card
- */
-const ProjectLayout = ({ pages }: { pages: { title: string; desc: string; img: string; bgColor: string }[] }) => {
-  return (
-    <>
-      {pages.map((page, index) => (
-        <div
-          key={index}
-          style={{ backgroundColor: page.bgColor }}
-          className="p-4 md:p-10 rounded-[3rem] mb-6 transition-colors duration-500"
-        >
-          {/* Inner Content Card - Always White */}
-          <div className="bg-white p-8 md:p-12 rounded-4xl shadow-sm">
-            <p className="text-black dark:text-black text-base md:text-2xl font-sans max-w-3xl mx-auto">
-              <span className="font-bold text-neutral-800 dark:text-black">
-                {page.title}
-              </span>{" "}
-              {page.desc}
-            </p>
-            <img
-              src={page.img}
-              alt="Project Detail"
-              height="500"
-              width="500"
-              className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain mt-8"
-            />
-          </div>
-        </div>
-      ))}
-    </>
-  );
-};
-
-// --- UNIQUE CONTENT FOR EACH PROJECT ---
-
-const PalaashContent = () => (
-  <ProjectLayout pages={[
-    { title: "The Problem:", desc: "Temple flower waste polluting local rivers and water bodies.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
-    { title: "Our Solution:", desc: "Upcycling floral waste into 100% organic dyes for the textile industry.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
-    { title: "Community Impact:", desc: "Empowering marginalized women through vocational training.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
-    { title: "Scale:", desc: "Processing over 500kg of floral waste monthly.", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
-    { title: "Verticals Under Palaash", desc: "We have 3 Verticals under Project Palaash", img: "https://assets.aceternity.com", bgColor: "#f9bdff" },
-    { title: "On-Ground Work:", desc: "Collection and segregation of temple flower waste for sustainable reuse.", img: "/Palaash1.jpg", bgColor: "#f9bdff" },
-    { title: "Abir Vertical:", desc: "Production of eco-friendly gulal using recycled flower petals.", img: "/PalaashAbir.jpg", bgColor: "#f9bdff" },
-    { title: "Aromy Vertical:", desc: "Creation of incense and aromatic products from processed floral waste.", img: "/PalaashAromy.JPG", bgColor: "#f9bdff" },
-    { title: "Gulal Products:", desc: "Final natural dye products ready for distribution and usage.", img: "/PalaashGUl.jpg", bgColor: "#f9bdff" },
-  ]} />
-);
-
-const AaraziContent = () => (
-  <ProjectLayout pages={[
-    { title: "About the Project:", desc: "Aarazi works toward restoring soil health by developing natural, chemical-free agricultural solutions. The project strengthens sustainable farming practices and spreads awareness about responsible land use.", img: "https://assets.aceternity.com", bgColor: "#98c09a" },
-    { title: "Why This Problem Matters:", desc: "With over 64% of agricultural land affected by chemical fertilizers and pesticides, soil loses nutrients, water bodies get polluted, and crop productivity declines. Addressing this is crucial for sustainable food systems and environmental balance.", img: "https://assets.aceternity.com", bgColor: "#98c09a" },
-    { title: "What We Do (Our Solution)", desc: "We create natural fertilizers, bio-pesticides, and compost, offering soil-friendly alternatives to harmful chemicals. Alongside this, we run a campus composting unit that converts daily organic waste into high-quality compost, promoting circular waste management.", img: "https://assets.aceternity.com", bgColor: "#98c09a" },
-    { title: "Impact So Far", desc: "Ensuring 3x higher income for artisans.", img: "https://assets.aceternity.com", bgColor: "#98c09a" },
-  ]} />
-);
-
-const IbtidaContent = () => (
-  <ProjectLayout pages={[
-    { title: "About the Project:", desc: "Ibtida focuses on developing carbon-negative, sustainable material solutions that support climate-conscious living. The project aims to explore future-forward alternatives that reduce environmental impact and inspire greener innovation within youth." , img: "https://assets.aceternity.com", bgColor: "#737373" },
-    { title: "Why This Problem Matters", desc: "Rapid climate change and rising CO₂ emissions demand immediate action. Traditional materials cause pollution, resource depletion, and long-term ecological harm, making it essential to identify sustainable, scalable alternatives.", img: "https://assets.aceternity.com", bgColor: "#737373" },
-    { title: "What We Do (Our Solution)", desc: "In our previous collaboration with GreenJams, we launched Sanscrete, a range of home-décor products crafted from agricultural and industrial waste to reduce pollution. Currently, Ibtida focuses on hemp-based materials, leveraging hemp’s low water usage, fast growth, and exceptional CO₂ absorption. This shift helps us promote climate-friendly, biodegradable, and innovative material solutions.", img: "https://assets.aceternity.com", bgColor: "#737373" },
-    { title: "Impact So Far", desc: "To date, our impact is defined by the promotion of low-carbon lifestyle alternatives and increased awareness about hemp innovation and green materials. By encouraging youth involvement in climate action and sustainability, we are fostering a generation of leaders dedicated to building a resilient and eco-friendly future.", img: "https://assets.aceternity.com", bgColor: "#737373" },
-  ]} />
-);
-
-const UtkarshContent = () => (
-  <ProjectLayout pages={[
-    { title: "Urban Scarcity:", desc: "Solving the lack of fresh produce in dense city centers.", img: "https://assets.aceternity.com", bgColor: "#ffa56d" },
-    { title: "Vertical Growth:", desc: "Implementing hydroponic systems using 90% less water.", img: "https://assets.aceternity.com", bgColor: "#ffa56d" },
-    { title: "Self-Sustenance:", desc: "Helping low-income families grow their own nutrition.", img: "https://assets.aceternity.com", bgColor: "#ffa56d" },
-    { title: "The Harvest:", desc: "Distributing surplus organic yields to local food banks.", img: "https://assets.aceternity.com", bgColor: "#ffa56d" },
-  ]} />
-);
-
-const UpcomingContent = () => (
-  <ProjectLayout pages={[
-    { title: "The Next Step:", desc: "Exploring the intersection of Clean Energy and Education.", img: "https://assets.aceternity.com", bgColor: "#F0FDF4" },
-    { title: "Ideation:", desc: "Shortlisting models for solar-powered learning centers.", img: "https://assets.aceternity.com", bgColor: "#F5F3FF" },
-    { title: "Collaboration:", desc: "Partnering with technical institutes for solutions.", img: "https://assets.aceternity.com", bgColor: "#FEF2F2" },
-    { title: "Timeline:", desc: "Pilot program scheduled for the upcoming semester.", img: "https://assets.aceternity.com", bgColor: "#F0F9FF" },
-  ]} />
-);
-
-// --- MAIN DATA ARRAY ---
-
-const data = [
+const projects: Project[] = [
   {
-    category: "Project",
+    category: "Waste to worth",
     title: "Palaash",
-    src: "/palaash.png",
-    content: <PalaashContent />,
+    src: "/projects/palaash/aromy-incense-range.jpg",
+    accent: "#f9bdff",
+    pages: [
+      {
+        eyebrow: "The challenge",
+        title: "Flower waste deserves a second life.",
+        description: "Palaash tackles flower waste that would otherwise end up in landfills and water bodies, turning a celebration’s leftovers into useful, earth-friendly products.",
+        image: "/projects/palaash/organic-gulal.jpg",
+      },
+      {
+        eyebrow: "Our campaigns",
+        title: "Celebrations made more conscious.",
+        description: "Utsav creates organic candles; Abir makes organic gulal; and Bandhan crafts seed rakhis—helping everyday celebrations become gentler on people and planet.",
+        image: "/projects/palaash/utsav-products.jpg",
+      },
+      {
+        eyebrow: "Our verticals",
+        title: "A circular use for every petal.",
+        description: "Aromy transforms floral waste into incense cones, while Gul gives textiles colour through organic dyes. Together, the verticals keep value in the material for longer.",
+        image: "/projects/palaash/gul-organic-dyes.jpg",
+      },
+      {
+        eyebrow: "Recognition",
+        title: "A locally rooted idea with a global voice.",
+        description: "Project Palaash was recognised as a Race 4 Oceans finalist at the Enactus World Cup 2021—encouragement to keep growing our circular approach to flower waste.",
+        image: "/projects/palaash/race-4-oceans-award.jpg",
+      },
+    ],
   },
   {
-    category: "Project",
+    category: "Soil restoration",
     title: "Aarazi",
-    src: "/aarazi.png",
-    content: <AaraziContent />,
+    src: "/Aarazi.png",
+    accent: "#98c09a",
+    pages: [
+      {
+        eyebrow: "The challenge",
+        title: "Healthy soil is the foundation of food security.",
+        description: "Aarazi addresses soil erosion and declining soil health, supporting farming practices that protect land for the communities that depend on it.",
+        image: "/Aarazi.png",
+      },
+      {
+        eyebrow: "Our solution",
+        title: "Natural alternatives for resilient farms.",
+        description: "We develop organic pesticides and compost that offer soil-friendly alternatives to harmful chemical inputs, while promoting practical, sustainable farming habits.",
+        image: "/yellow.png",
+      },
+      {
+        eyebrow: "Growing together",
+        title: "Making regeneration accessible.",
+        description: "Alongside composting, Aarazi works on planting kits that make it easier for people to begin growing, learning and caring for their local environment.",
+        image: "/Projectpalaash.png",
+      },
+    ],
   },
   {
-    category: "Project",
+    category: "Climate innovation",
     title: "Ibtida",
     src: "/Ibtida.png",
-    content: <IbtidaContent />,
+    accent: "#737373",
+    pages: [
+      {
+        eyebrow: "The challenge",
+        title: "Every material choice carries a carbon cost.",
+        description: "Ibtida tackles carbon emissions by exploring lower-impact materials and products that encourage more climate-conscious choices in daily life.",
+        image: "/Ibtida.png",
+      },
+      {
+        eyebrow: "Our vertical",
+        title: "Bags made from hemp, built for a lighter footprint.",
+        description: "Our hemp-based bags showcase a durable, reusable alternative to conventional materials, while opening conversations around natural fibres and responsible consumption.",
+        image: "/Ibtida.png",
+      },
+    ],
   },
   {
-    category: "Project",
+    category: "Food circularity",
     title: "Utkarsh",
     src: "/utkarsh.png",
-    content: <UtkarshContent />,
-  },
-  {
-    category: "Upcoming",
-    title: "In Progress",
-    src: "https://images.unsplash.com",
-    content: <UpcomingContent />,
+    accent: "#ffa56d",
+    pages: [
+      {
+        eyebrow: "The challenge",
+        title: "Good nutrition should not create more waste.",
+        description: "Utkarsh rethinks food waste by finding value in fruit peels that are often discarded, creating a more circular path from kitchen to snack.",
+        image: "/Projectutkarsh.png",
+      },
+      {
+        eyebrow: "Our solution",
+        title: "Veggitos: delicious chips from fruit peels.",
+        description: "We turn fruit peels into Veggitos, a value-added snack that helps reduce food waste while making everyday choices more resourceful.",
+        image: "/utkarsh.png",
+      },
+      {
+        eyebrow: "Community impact",
+        title: "Creating work closer to home.",
+        description: "The project also generates employment opportunities for women in rural areas, connecting circular production with more inclusive livelihoods.",
+        image: "/Projectutkarsh.png",
+      },
+    ],
   },
 ];

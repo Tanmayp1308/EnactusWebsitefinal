@@ -1,37 +1,11 @@
 "use client";
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface Point {
   x: number;
   y: number;
 }
-
-const dist = (a: Point, b: Point): number => {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  return Math.sqrt(dx * dx + dy * dy);
-};
-
-const getAttr = (
-  distance: number,
-  maxDist: number,
-  minVal: number,
-  maxVal: number
-): number => {
-  const val = maxVal - Math.abs((maxVal * distance) / maxDist);
-  return Math.max(minVal, val + minVal);
-};
-
-const debounce = <T extends unknown[]>(
-  func: (...args: T) => void,
-  delay: number
-): ((...args: T) => void) => {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  return (...args: T) => {
-    if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
-  };
-};
 
 interface TextPressureProps {
   text?: string;
@@ -44,134 +18,153 @@ interface TextPressureProps {
   minFontSize?: number;
 }
 
-const TextPressure: React.FC<TextPressureProps> = ({
+const distance = (a: Point, b: Point) =>
+  Math.hypot(b.x - a.x, b.y - a.y);
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
+
+const debounce = <T extends unknown[]>(
+  callback: (...args: T) => void,
+  delay: number
+) => {
+  let timeoutId: number | undefined;
+
+  return (...args: T) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => callback(...args), delay);
+  };
+};
+
+const TextPressure = ({
   text = "Compressa",
-  fontFamily = "Compressa VF",
-  fontUrl = "https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2",
+  fontFamily = "Roboto Flex",
+  fontUrl = "https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap",
   width = true,
   weight = true,
   italic = true,
   textColor = "#FFFFFF",
   minFontSize = 24,
-}) => {
+}: TextPressureProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const spansRef = useRef<(HTMLSpanElement | null)[]>([]);
-
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const cursorRef = useRef<Point>({ x: 0, y: 0 });
 
   const [fontSize, setFontSize] = useState(minFontSize);
-  const [fontLoaded, setFontLoaded] = useState(false);
-
-  const chars = text.split("");
+  const chars = useMemo(() => text.split(""), [text]);
 
   useEffect(() => {
     spansRef.current = new Array(chars.length).fill(null);
   }, [chars.length]);
 
-  // Load font
-  useEffect(() => {
-    const font = new FontFace(fontFamily, `url(${fontUrl})`);
-    font
-      .load()
-      .then(() => {
-        document.fonts.add(font);
-        setFontLoaded(true);
-      })
-      .catch(() => setFontLoaded(true));
-  }, [fontFamily, fontUrl]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorRef.current = { x: e.clientX, y: e.clientY };
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   const setSize = useCallback(() => {
-    if (!containerRef.current) return;
-    const width = containerRef.current.getBoundingClientRect().width;
-    setFontSize(Math.max(width / (chars.length / 2), minFontSize));
+    const container = containerRef.current;
+    if (!container) return;
+
+    const availableWidth = container.getBoundingClientRect().width;
+    const sizeToFit = availableWidth / Math.max(chars.length * 0.64, 1);
+
+    setFontSize(Math.max(minFontSize, Math.min(sizeToFit, 180)));
   }, [chars.length, minFontSize]);
 
   useEffect(() => {
     const resize = debounce(setSize, 100);
-    if (fontLoaded) resize();
+
+    resize();
+    document.fonts?.ready.then(resize).catch(resize);
+
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, [setSize, fontLoaded]);
+  }, [setSize]);
 
   useEffect(() => {
-    let raf: number;
+    const onMouseMove = (event: MouseEvent) => {
+      cursorRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
+
+  useEffect(() => {
+    let animationFrame = 0;
 
     const animate = () => {
-      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+      mouseRef.current.x +=
+        (cursorRef.current.x - mouseRef.current.x) / 15;
+      mouseRef.current.y +=
+        (cursorRef.current.y - mouseRef.current.y) / 15;
 
-      if (titleRef.current) {
-        const maxDist = titleRef.current.offsetWidth / 2;
+      const title = titleRef.current;
+
+      if (title) {
+        const maxDistance = Math.max(title.offsetWidth / 2, 1);
 
         spansRef.current.forEach((span) => {
           if (!span) return;
 
           const rect = span.getBoundingClientRect();
-          const d = dist(mouseRef.current, {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
-          });
 
-          const wdth = width ? Math.floor(getAttr(d, maxDist, 50, 200)) : 100;
-          const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
-          const ital = italic ? getAttr(d, maxDist, 0, 1).toFixed(2) : "0";
+          const proximity =
+            1 -
+            clamp(
+              distance(mouseRef.current, {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2,
+              }) / maxDistance,
+              0,
+              1
+            );
 
-          span.style.fontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${ital}`;
+          // Strong resting style; subtle cursor-pressure response.
+          const wdth = width ? Math.round(100 + proximity * 35) : 100;
+          const wght = weight ? Math.round(650 + proximity * 350) : 650;
+          const slnt = italic ? Math.round(-6 * proximity) : 0;
+
+          span.style.fontVariationSettings =
+            `'wdth' ${wdth}, 'wght' ${wght}, 'slnt' ${slnt}`;
         });
       }
 
-      raf = requestAnimationFrame(animate);
+      animationFrame = requestAnimationFrame(animate);
     };
 
     animate();
-    return () => cancelAnimationFrame(raf);
-  }, [width, weight, italic]);
 
-  const styleElement = useMemo(
-    () => (
-      <style jsx global>{`
-        @font-face {
-          font-family: "${fontFamily}";
-          src: url("${fontUrl}");
-          font-display: swap;
-        }
-      `}</style>
-    ),
-    [fontFamily, fontUrl]
+    return () => cancelAnimationFrame(animationFrame);
+  }, [italic, weight, width]);
+
+  const fontImport = useMemo(
+    () => <style jsx global>{`@import url("${fontUrl}");`}</style>,
+    [fontUrl]
   );
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-hidden">
-      {styleElement}
+    <div ref={containerRef} className="w-full overflow-visible">
+      {fontImport}
+
       <h1
         ref={titleRef}
-        className="uppercase text-center"
+        className="m-0 whitespace-nowrap pb-2 text-center uppercase leading-[0.88]"
         style={{
-          fontFamily: `${fontFamily}, sans-serif`,
+          fontFamily: `"${fontFamily}", sans-serif`,
           fontSize,
           color: textColor,
-          letterSpacing: "-0.05em",
-          margin: 0,
+          letterSpacing: "-0.06em",
         }}
       >
-        {chars.map((char, i) => (
+        {chars.map((char, index) => (
           <span
-            key={i}
-           ref={(el) => {
-  spansRef.current[i] = el;
-}}
-            className="inline-block"
+            key={`${char}-${index}`}
+            ref={(element) => {
+              spansRef.current[index] = element;
+            }}
+            className="inline-block will-change-[font-variation-settings]"
           >
             {char === " " ? "\u00A0" : char}
           </span>
